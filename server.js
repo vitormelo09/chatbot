@@ -8,7 +8,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Salva estado dos usuários
+// memória simples
 const usuarios = {};
 
 function menuPrincipal() {
@@ -19,34 +19,62 @@ function menuPrincipal() {
 3️⃣ Doações
 4️⃣ Atendente
 
-Digite uma opção.`;
+Digite uma opção.
+
+0️⃣ Voltar ao menu`;
 }
 
 app.post("/webhook", (req, res) => {
 
     const numero = req.body.From;
-    const msg = req.body.Body.trim();
+    const msg = req.body.Body.toLowerCase().trim();
 
     const twiml = new twilio.twiml.MessagingResponse();
 
-    // cria usuário se não existir
+    // cria usuário
     if (!usuarios[numero]) {
         usuarios[numero] = {
             etapa: "menu"
         };
     }
 
-    const etapa = usuarios[numero].etapa;
+    // iniciar conversa
+    if (
+        msg === "oi" ||
+        msg === "olá" ||
+        msg === "ola" ||
+        msg === "menu"
+    ) {
 
-    // MENU PRINCIPAL
-    if (msg === "0") {
         usuarios[numero].etapa = "menu";
 
         twiml.message(menuPrincipal());
+
+        res.writeHead(200, {
+            "Content-Type": "text/xml"
+        });
+
+        return res.end(twiml.toString());
     }
 
-    // ETAPA MENU
-    else if (etapa === "menu") {
+    // voltar menu
+    if (msg === "0") {
+
+        usuarios[numero].etapa = "menu";
+
+        twiml.message(menuPrincipal());
+
+        res.writeHead(200, {
+            "Content-Type": "text/xml"
+        });
+
+        return res.end(twiml.toString());
+    }
+
+    const etapa = usuarios[numero].etapa;
+
+    // MENU
+    if (etapa === "menu") {
 
         if (msg === "1") {
 
@@ -59,7 +87,9 @@ app.post("/webhook", (req, res) => {
 2️⃣ Luna
 3️⃣ Mel
 
-Digite o número do animal.`
+Digite o número do animal.
+
+0️⃣ Voltar ao menu`
             );
         }
 
@@ -70,7 +100,9 @@ Digite o número do animal.`
 
 ✔️ Ser maior de idade
 ✔️ Ter espaço adequado
-✔️ Assinar contrato`
+✔️ Assinar contrato
+
+0️⃣ Voltar ao menu`
             );
         }
 
@@ -80,14 +112,18 @@ Digite o número do animal.`
 `💖 *Doações*
 
 PIX:
-ong@pix.com`
+ong@pix.com
+
+0️⃣ Voltar ao menu`
             );
         }
 
         else if (msg === "4") {
 
             twiml.message(
-`👩‍💻 Um atendente responderá em breve.`
+`👩‍💻 Um atendente responderá em breve.
+
+0️⃣ Voltar ao menu`
             );
         }
 
@@ -96,12 +132,12 @@ ong@pix.com`
             twiml.message(
 `❌ Opção inválida.
 
-Digite 0 para voltar ao menu.`
+0️⃣ Voltar ao menu`
             );
         }
     }
 
-    // ETAPA ANIMAIS
+    // ANIMAIS
     else if (etapa === "animais") {
 
         if (msg === "1") {
@@ -116,9 +152,8 @@ Porte: Médio
 Vacinado: Sim
 Castrado: Sim
 
-Digite:
 1️⃣ Quero adotar
-0️⃣ Menu`
+0️⃣ Voltar ao menu`
             );
         }
 
@@ -133,9 +168,8 @@ Idade: 1 ano
 Porte: Pequeno
 Vacinada: Sim
 
-Digite:
 1️⃣ Quero adotar
-0️⃣ Menu`
+0️⃣ Voltar ao menu`
             );
         }
 
@@ -150,16 +184,17 @@ Idade: 4 meses
 Filhote
 Vacinada: Sim
 
-Digite:
 1️⃣ Quero adotar
-0️⃣ Menu`
+0️⃣ Voltar ao menu`
             );
         }
 
         else {
 
             twiml.message(
-`❌ Animal inválido.`
+`❌ Animal inválido.
+
+0️⃣ Voltar ao menu`
             );
         }
     }
@@ -169,13 +204,24 @@ Digite:
 
         if (msg === "1") {
 
+            usuarios[numero].etapa = "menu";
+
             twiml.message(
 `✅ Pedido de adoção do Thor enviado!
 
-Nossa equipe entrará em contato 🐾`
-            );
+Nossa equipe entrará em contato 🐾
 
-            usuarios[numero].etapa = "menu";
+0️⃣ Voltar ao menu`
+            );
+        }
+
+        else {
+
+            twiml.message(
+`❌ Opção inválida.
+
+0️⃣ Voltar ao menu`
+            );
         }
     }
 
@@ -184,11 +230,22 @@ Nossa equipe entrará em contato 🐾`
 
         if (msg === "1") {
 
-            twiml.message(
-`✅ Pedido de adoção da Luna enviado!`
-            );
-
             usuarios[numero].etapa = "menu";
+
+            twiml.message(
+`✅ Pedido de adoção da Luna enviado!
+
+0️⃣ Voltar ao menu`
+            );
+        }
+
+        else {
+
+            twiml.message(
+`❌ Opção inválida.
+
+0️⃣ Voltar ao menu`
+            );
         }
     }
 
@@ -197,11 +254,22 @@ Nossa equipe entrará em contato 🐾`
 
         if (msg === "1") {
 
-            twiml.message(
-`✅ Pedido de adoção da Mel enviado!`
-            );
-
             usuarios[numero].etapa = "menu";
+
+            twiml.message(
+`✅ Pedido de adoção da Mel enviado!
+
+0️⃣ Voltar ao menu`
+            );
+        }
+
+        else {
+
+            twiml.message(
+`❌ Opção inválida.
+
+0️⃣ Voltar ao menu`
+            );
         }
     }
 
