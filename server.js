@@ -8,53 +8,107 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-function menu() {
+// Salva estado dos usuários
+const usuarios = {};
+
+function menuPrincipal() {
     return `🐾 *ONG Patinhas Felizes*
 
-1️⃣ Ver animais para adoção
+1️⃣ Ver animais
 2️⃣ Como adotar
-3️⃣ Fazer doação
-4️⃣ Agendar visita
-5️⃣ Falar com atendente
-6️⃣ Animais perdidos
-7️⃣ Ser voluntário
-8️⃣ Redes sociais
-9️⃣ Horário e localização
+3️⃣ Doações
+4️⃣ Atendente
 
 Digite uma opção.`;
 }
 
 app.post("/webhook", (req, res) => {
 
-    const mensagem = req.body.Body.toLowerCase().trim();
+    const numero = req.body.From;
+    const msg = req.body.Body.trim();
 
     const twiml = new twilio.twiml.MessagingResponse();
 
-    // MENU
-    if (
-        mensagem === "oi" ||
-        mensagem === "menu" ||
-        mensagem === "0"
-    ) {
-        twiml.message(menu());
+    // cria usuário se não existir
+    if (!usuarios[numero]) {
+        usuarios[numero] = {
+            etapa: "menu"
+        };
     }
 
-    // ADOÇÃO
-    else if (mensagem === "1") {
-        twiml.message(
+    const etapa = usuarios[numero].etapa;
+
+    // MENU PRINCIPAL
+    if (msg === "0") {
+        usuarios[numero].etapa = "menu";
+
+        twiml.message(menuPrincipal());
+    }
+
+    // ETAPA MENU
+    else if (etapa === "menu") {
+
+        if (msg === "1") {
+
+            usuarios[numero].etapa = "animais";
+
+            twiml.message(
 `🐶 *Animais disponíveis*
 
-1 - Thor
-2 - Luna
-3 - Mel
+1️⃣ Thor
+2️⃣ Luna
+3️⃣ Mel
 
 Digite o número do animal.`
-        );
+            );
+        }
+
+        else if (msg === "2") {
+
+            twiml.message(
+`📋 *Como adotar*
+
+✔️ Ser maior de idade
+✔️ Ter espaço adequado
+✔️ Assinar contrato`
+            );
+        }
+
+        else if (msg === "3") {
+
+            twiml.message(
+`💖 *Doações*
+
+PIX:
+ong@pix.com`
+            );
+        }
+
+        else if (msg === "4") {
+
+            twiml.message(
+`👩‍💻 Um atendente responderá em breve.`
+            );
+        }
+
+        else {
+
+            twiml.message(
+`❌ Opção inválida.
+
+Digite 0 para voltar ao menu.`
+            );
+        }
     }
 
-    // THOR
-    else if (mensagem === "thor" || mensagem === "1 - thor") {
-        twiml.message(
+    // ETAPA ANIMAIS
+    else if (etapa === "animais") {
+
+        if (msg === "1") {
+
+            usuarios[numero].etapa = "thor";
+
+            twiml.message(
 `🐶 *Thor*
 
 Idade: 2 anos
@@ -63,14 +117,16 @@ Vacinado: Sim
 Castrado: Sim
 
 Digite:
-1 - Quero adotar
-0 - Menu`
-        );
-    }
+1️⃣ Quero adotar
+0️⃣ Menu`
+            );
+        }
 
-    // LUNA
-    else if (mensagem === "2") {
-        twiml.message(
+        else if (msg === "2") {
+
+            usuarios[numero].etapa = "luna";
+
+            twiml.message(
 `🐱 *Luna*
 
 Idade: 1 ano
@@ -78,14 +134,16 @@ Porte: Pequeno
 Vacinada: Sim
 
 Digite:
-1 - Quero adotar
-0 - Menu`
-        );
-    }
+1️⃣ Quero adotar
+0️⃣ Menu`
+            );
+        }
 
-    // MEL
-    else if (mensagem === "3") {
-        twiml.message(
+        else if (msg === "3") {
+
+            usuarios[numero].etapa = "mel";
+
+            twiml.message(
 `🐶 *Mel*
 
 Idade: 4 meses
@@ -93,105 +151,62 @@ Filhote
 Vacinada: Sim
 
 Digite:
-1 - Quero adotar
-0 - Menu`
-        );
+1️⃣ Quero adotar
+0️⃣ Menu`
+            );
+        }
+
+        else {
+
+            twiml.message(
+`❌ Animal inválido.`
+            );
+        }
     }
 
-    // COMO ADOTAR
-    else if (mensagem === "como adotar") {
-        twiml.message(
-`📋 *Processo de adoção*
+    // THOR
+    else if (etapa === "thor") {
 
-✔️ Ser maior de idade
-✔️ Ter espaço adequado
-✔️ Assinar termo de responsabilidade
-✔️ Enviar documentos`
-        );
+        if (msg === "1") {
+
+            twiml.message(
+`✅ Pedido de adoção do Thor enviado!
+
+Nossa equipe entrará em contato 🐾`
+            );
+
+            usuarios[numero].etapa = "menu";
+        }
     }
 
-    // DOAÇÃO
-    else if (mensagem === "4") {
-        twiml.message(
-`💖 *Doações*
+    // LUNA
+    else if (etapa === "luna") {
 
-PIX:
-ongpatinhas@pix.com
+        if (msg === "1") {
 
-Toda ajuda salva vidas 🐾`
-        );
+            twiml.message(
+`✅ Pedido de adoção da Luna enviado!`
+            );
+
+            usuarios[numero].etapa = "menu";
+        }
     }
 
-    // VISITA
-    else if (mensagem === "5") {
-        twiml.message(
-`📅 *Agendamento*
+    // MEL
+    else if (etapa === "mel") {
 
-Funcionamos:
-Segunda a sábado
-09h às 18h
+        if (msg === "1") {
 
-Digite seu nome para agendar.`
-        );
-    }
+            twiml.message(
+`✅ Pedido de adoção da Mel enviado!`
+            );
 
-    // ATENDENTE
-    else if (mensagem === "6") {
-        twiml.message(
-`👩‍💻 Um atendente responderá em breve.`
-        );
-    }
-
-    // VOLUNTÁRIO
-    else if (mensagem === "7") {
-        twiml.message(
-`🤝 *Voluntariado*
-
-Precisamos de ajuda com:
-🐾 Banho
-🐾 Alimentação
-🐾 Divulgação
-
-Digite seu nome e idade.`
-        );
-    }
-
-    // REDES
-    else if (mensagem === "8") {
-        twiml.message(
-`📱 Redes sociais
-
-Instagram:
-@ongpatinhas
-
-Facebook:
-facebook.com/ongpatinhas`
-        );
-    }
-
-    // LOCAL
-    else if (mensagem === "9") {
-        twiml.message(
-`📍 *Localização*
-
-Rua das Flores, 100
-São Paulo - SP
-
-🕘 09h às 18h`
-        );
-    }
-
-    else {
-        twiml.message(
-`❌ Opção inválida.
-
-Digite:
-0 - Menu`
-        );
+            usuarios[numero].etapa = "menu";
+        }
     }
 
     res.writeHead(200, {
-        "Content-Type": "text/xml",
+        "Content-Type": "text/xml"
     });
 
     res.end(twiml.toString());
