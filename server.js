@@ -19,9 +19,7 @@ function menuPrincipal() {
 3️⃣ Doações
 4️⃣ Atendente
 
-Digite uma opção.
-
-0️⃣ Voltar ao menu`;
+Digite uma opção.`;
 }
 
 app.post("/webhook", (req, res) => {
