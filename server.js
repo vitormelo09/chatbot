@@ -8,11 +8,10 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// memória simples
 const usuarios = {};
 
 function menuPrincipal() {
-    return `🐾 *ONG Patinhas Felizes*
+    return `🐾 *ONG Ecopatas*
 
 1️⃣ Ver animais
 2️⃣ Como adotar
@@ -29,14 +28,12 @@ app.post("/webhook", (req, res) => {
 
     const twiml = new twilio.twiml.MessagingResponse();
 
-    // cria usuário
     if (!usuarios[numero]) {
         usuarios[numero] = {
             etapa: "menu"
         };
     }
 
-    // iniciar conversa
     if (
         msg === "oi" ||
         msg === "olá" ||
@@ -55,7 +52,6 @@ app.post("/webhook", (req, res) => {
         return res.end(twiml.toString());
     }
 
-    // voltar menu
     if (msg === "0") {
 
         usuarios[numero].etapa = "menu";
@@ -71,7 +67,6 @@ app.post("/webhook", (req, res) => {
 
     const etapa = usuarios[numero].etapa;
 
-    // MENU
     if (etapa === "menu") {
 
         if (msg === "1") {
@@ -110,7 +105,7 @@ Digite o número do animal.
 `💖 *Doações*
 
 PIX:
-ong@pix.com
+ecopatas@gmail.com
 
 0️⃣ Voltar ao menu`
             );
@@ -135,7 +130,6 @@ ong@pix.com
         }
     }
 
-    // ANIMAIS
     else if (etapa === "animais") {
 
         if (msg === "1") {
@@ -197,7 +191,6 @@ Vacinada: Sim
         }
     }
 
-    // THOR
     else if (etapa === "thor") {
 
         if (msg === "1") {
@@ -223,7 +216,6 @@ Nossa equipe entrará em contato 🐾
         }
     }
 
-    // LUNA
     else if (etapa === "luna") {
 
         if (msg === "1") {
@@ -247,7 +239,6 @@ Nossa equipe entrará em contato 🐾
         }
     }
 
-    // MEL
     else if (etapa === "mel") {
 
         if (msg === "1") {
