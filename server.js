@@ -11,12 +11,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const usuarios = {};
 
 function menuPrincipal() {
-    return `🐾 *ONG Ecopatas*
+    return `♻️🐾 *ONG Ecopatas*
 
-1️⃣ Ver animais
-2️⃣ Como adotar
-3️⃣ Doações
-4️⃣ Atendente
+Ajudamos animais abandonados através da coleta de lacres e tampinhas ❤️
+
+1️⃣ Sobre a ONG
+2️⃣ Como ajudar
+3️⃣ Pontos de coleta
+4️⃣ Doações
+5️⃣ Falar com atendente
 
 Digite uma opção.`;
 }
@@ -34,6 +37,7 @@ app.post("/webhook", (req, res) => {
         };
     }
 
+    // MENU PRINCIPAL
     if (
         msg === "oi" ||
         msg === "olá" ||
@@ -52,6 +56,7 @@ app.post("/webhook", (req, res) => {
         return res.end(twiml.toString());
     }
 
+    // VOLTAR MENU
     if (msg === "0") {
 
         usuarios[numero].etapa = "menu";
@@ -67,20 +72,24 @@ app.post("/webhook", (req, res) => {
 
     const etapa = usuarios[numero].etapa;
 
+    // MENU
     if (etapa === "menu") {
 
         if (msg === "1") {
 
-            usuarios[numero].etapa = "animais";
+            usuarios[numero].etapa = "sobre";
 
             twiml.message(
-`🐶 *Animais disponíveis*
+`🐾 *Sobre a ONG Ecopatas*
 
-1️⃣ Thor
-2️⃣ Luna
-3️⃣ Mel
+A Ecopatas arrecada tampinhas plásticas e lacres de alumínio para ajudar animais abandonados.
 
-Digite o número do animal.
+Todo material reciclável é vendido e o valor arrecadado ajuda em:
+
+🐶 Ração
+💉 Vacinas
+🏥 Tratamentos veterinários
+🐱 Resgate de animais
 
 0️⃣ Voltar ao menu`
             );
@@ -88,12 +97,16 @@ Digite o número do animal.
 
         else if (msg === "2") {
 
-            twiml.message(
-`📋 *Como adotar*
+            usuarios[numero].etapa = "ajuda";
 
-✔️ Ser maior de idade
-✔️ Ter espaço adequado
-✔️ Assinar contrato
+            twiml.message(
+`♻️ *Como ajudar*
+
+1️⃣ Doar tampinhas plásticas
+2️⃣ Doar lacres de alumínio
+3️⃣ Ser voluntário
+
+Digite uma opção.
 
 0️⃣ Voltar ao menu`
             );
@@ -101,11 +114,17 @@ Digite o número do animal.
 
         else if (msg === "3") {
 
-            twiml.message(
-`💖 *Doações*
+            usuarios[numero].etapa = "coleta";
 
-PIX:
-ecopatas@gmail.com
+            twiml.message(
+`📍 *Pontos de coleta*
+
+📌 Mercado Central
+📌 Pet Shop Amigo Fiel
+📌 Escola Municipal Esperança
+
+🕗 Horário:
+08h às 18h
 
 0️⃣ Voltar ao menu`
             );
@@ -113,8 +132,29 @@ ecopatas@gmail.com
 
         else if (msg === "4") {
 
+            usuarios[numero].etapa = "doacoes";
+
             twiml.message(
-`👩‍💻 Um atendente responderá em breve.
+`💖 *Doações*
+
+PIX:
+ecopatas@gmail.com
+
+Banco:
+NuBank
+
+Toda ajuda salva vidas 🐾
+
+0️⃣ Voltar ao menu`
+            );
+        }
+
+        else if (msg === "5") {
+
+            usuarios[numero].etapa = "atendente";
+
+            twiml.message(
+`👩‍💻 Um voluntário responderá você em breve.
 
 0️⃣ Voltar ao menu`
             );
@@ -125,82 +165,67 @@ ecopatas@gmail.com
             twiml.message(
 `❌ Opção inválida.
 
+Digite uma opção válida.
+
 0️⃣ Voltar ao menu`
             );
         }
     }
 
-    else if (etapa === "animais") {
+    // COMO AJUDAR
+    else if (etapa === "ajuda") {
 
         if (msg === "1") {
 
-            usuarios[numero].etapa = "thor";
+            usuarios[numero].etapa = "menu";
 
             twiml.message(
-`🐶 *Thor*
+`♻️ *Doação de tampinhas*
 
-Idade: 2 anos
-Porte: Médio
-Vacinado: Sim
-Castrado: Sim
+Aceitamos:
+✅ Tampinhas de refrigerante
+✅ Tampinhas de shampoo
+✅ Tampinhas de produtos de limpeza
 
-1️⃣ Quero adotar
+📦 Entregue em um ponto de coleta.
+
+Obrigado por ajudar 🐾
+
 0️⃣ Voltar ao menu`
             );
         }
 
         else if (msg === "2") {
 
-            usuarios[numero].etapa = "luna";
+            usuarios[numero].etapa = "menu";
 
             twiml.message(
-`🐱 *Luna*
+`♻️ *Doação de lacres*
 
-Idade: 1 ano
-Porte: Pequeno
-Vacinada: Sim
+Aceitamos lacres de:
+🥤 Refrigerantes
+🍺 Latas em geral
 
-1️⃣ Quero adotar
+📦 Junte os lacres e entregue em nossos pontos de coleta.
+
 0️⃣ Voltar ao menu`
             );
         }
 
         else if (msg === "3") {
 
-            usuarios[numero].etapa = "mel";
-
-            twiml.message(
-`🐶 *Mel*
-
-Idade: 4 meses
-Filhote
-Vacinada: Sim
-
-1️⃣ Quero adotar
-0️⃣ Voltar ao menu`
-            );
-        }
-
-        else {
-
-            twiml.message(
-`❌ Animal inválido.
-
-0️⃣ Voltar ao menu`
-            );
-        }
-    }
-
-    else if (etapa === "thor") {
-
-        if (msg === "1") {
-
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`✅ Pedido de adoção do Thor enviado!
+`🤝 *Seja voluntário*
 
-Nossa equipe entrará em contato 🐾
+Você pode ajudar em:
+🐶 Resgates
+📦 Organização
+📲 Divulgação
+🚚 Transporte de doações
+
+Nossa equipe entrará em contato.
 
 0️⃣ Voltar ao menu`
             );
@@ -216,52 +241,7 @@ Nossa equipe entrará em contato 🐾
         }
     }
 
-    else if (etapa === "luna") {
-
-        if (msg === "1") {
-
-            usuarios[numero].etapa = "menu";
-
-            twiml.message(
-`✅ Pedido de adoção da Luna enviado!
-
-0️⃣ Voltar ao menu`
-            );
-        }
-
-        else {
-
-            twiml.message(
-`❌ Opção inválida.
-
-0️⃣ Voltar ao menu`
-            );
-        }
-    }
-
-    else if (etapa === "mel") {
-
-        if (msg === "1") {
-
-            usuarios[numero].etapa = "menu";
-
-            twiml.message(
-`✅ Pedido de adoção da Mel enviado!
-
-0️⃣ Voltar ao menu`
-            );
-        }
-
-        else {
-
-            twiml.message(
-`❌ Opção inválida.
-
-0️⃣ Voltar ao menu`
-            );
-        }
-    }
-
+    // RESPOSTA FINAL
     res.writeHead(200, {
         "Content-Type": "text/xml"
     });
@@ -270,5 +250,5 @@ Nossa equipe entrará em contato 🐾
 });
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Servidor rodando");
+    console.log("Servidor rodando 🚀");
 });
