@@ -11,17 +11,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const usuarios = {};
 
 function menuPrincipal() {
-    return `♻️🐾 *ONG Ecopatas*
+    return `╔══════════════════╗
+        ECOPATAS
+╚══════════════════╝
 
-Ajudamos animais abandonados através da coleta de lacres e tampinhas ❤️
+ONG que arrecada lacres e tampinhas
+para ajudar animais abandonados.
 
-1️⃣ Sobre a ONG
-2️⃣ Como ajudar
-3️⃣ Pontos de coleta
-4️⃣ Doações
-5️⃣ Falar com atendente
+[1] Sobre a ONG
+[2] Como ajudar
+[3] Pontos de coleta
+[4] Doações
+[5] Contato
+[6] Atendente
 
-Digite uma opção.`;
+Digite uma opção:`;
 }
 
 app.post("/webhook", (req, res) => {
@@ -37,7 +41,7 @@ app.post("/webhook", (req, res) => {
         };
     }
 
-    // MENU PRINCIPAL
+    // INICIAR CHAT
     if (
         msg === "oi" ||
         msg === "olá" ||
@@ -72,70 +76,85 @@ app.post("/webhook", (req, res) => {
 
     const etapa = usuarios[numero].etapa;
 
-    // MENU
+    // MENU PRINCIPAL
     if (etapa === "menu") {
 
+        // SOBRE ONG
         if (msg === "1") {
 
             usuarios[numero].etapa = "sobre";
 
             twiml.message(
-`🐾 *Sobre a ONG Ecopatas*
+`╔══════════════════╗
+      SOBRE A ONG
+╚══════════════════╝
 
-A Ecopatas arrecada tampinhas plásticas e lacres de alumínio para ajudar animais abandonados.
+A Ecopatas arrecada tampinhas
+plásticas e lacres de alumínio
+para ajudar animais abandonados.
 
-Todo material reciclável é vendido e o valor arrecadado ajuda em:
+O valor arrecadado ajuda em:
 
-🐶 Ração
-💉 Vacinas
-🏥 Tratamentos veterinários
-🐱 Resgate de animais
+[✔] Ração
+[✔] Vacinas
+[✔] Castrações
+[✔] Tratamentos veterinários
+[✔] Resgate de animais
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
 
+        // COMO AJUDAR
         else if (msg === "2") {
 
             usuarios[numero].etapa = "ajuda";
 
             twiml.message(
-`♻️ *Como ajudar*
+`╔══════════════════╗
+      COMO AJUDAR
+╚══════════════════╝
 
-1️⃣ Doar tampinhas plásticas
-2️⃣ Doar lacres de alumínio
-3️⃣ Ser voluntário
+[1] Doar tampinhas
+[2] Doar lacres
+[3] Ser voluntário
 
 Digite uma opção.
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
 
+        // PONTOS DE COLETA
         else if (msg === "3") {
 
             usuarios[numero].etapa = "coleta";
 
             twiml.message(
-`📍 *Pontos de coleta*
+`╔══════════════════╗
+   PONTOS DE COLETA
+╚══════════════════╝
 
-📌 Mercado Central
-📌 Pet Shop Amigo Fiel
-📌 Escola Municipal Esperança
+[#] Mercado Central
+[#] Pet Shop Amigo Fiel
+[#] Escola Esperança
 
-🕗 Horário:
+Horário:
 08h às 18h
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
 
+        // DOAÇÕES
         else if (msg === "4") {
 
             usuarios[numero].etapa = "doacoes";
 
             twiml.message(
-`💖 *Doações*
+`╔══════════════════╗
+        DOAÇÕES
+╚══════════════════╝
 
 PIX:
 ecopatas@gmail.com
@@ -143,31 +162,64 @@ ecopatas@gmail.com
 Banco:
 NuBank
 
-Toda ajuda salva vidas 🐾
+[#] Toda ajuda salva vidas.
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
 
+        // CONTATO
         else if (msg === "5") {
+
+            usuarios[numero].etapa = "contato";
+
+            twiml.message(
+`╔══════════════════╗
+        CONTATO
+╚══════════════════╝
+
+Instagram:
+@ecopatas
+
+Email:
+contato@ecopatas.org
+
+Telefone:
+(11) 99999-9999
+
+Site:
+www.ecopatas.org
+
+[0] Voltar ao menu`
+            );
+        }
+
+        // ATENDENTE
+        else if (msg === "6") {
 
             usuarios[numero].etapa = "atendente";
 
             twiml.message(
-`👩‍💻 Um voluntário responderá você em breve.
+`╔══════════════════╗
+       ATENDENTE
+╚══════════════════╝
 
-0️⃣ Voltar ao menu`
+[#] Um voluntário responderá
+você em breve.
+
+[0] Voltar ao menu`
             );
         }
 
+        // OPÇÃO INVÁLIDA
         else {
 
             twiml.message(
-`❌ Opção inválida.
+`[X] Opção inválida.
 
 Digite uma opção válida.
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
     }
@@ -175,68 +227,85 @@ Digite uma opção válida.
     // COMO AJUDAR
     else if (etapa === "ajuda") {
 
+        // TAMPINHAS
         if (msg === "1") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`♻️ *Doação de tampinhas*
+`╔══════════════════╗
+    DOAÇÃO TAMPINHAS
+╚══════════════════╝
 
 Aceitamos:
-✅ Tampinhas de refrigerante
-✅ Tampinhas de shampoo
-✅ Tampinhas de produtos de limpeza
 
-📦 Entregue em um ponto de coleta.
+[✔] Refrigerante
+[✔] Shampoo
+[✔] Produtos de limpeza
+[✔] Garrafas plásticas
 
-Obrigado por ajudar 🐾
+[#] Entregue em um ponto
+de coleta.
 
-0️⃣ Voltar ao menu`
+Obrigado por ajudar.
+
+[0] Voltar ao menu`
             );
         }
 
+        // LACRES
         else if (msg === "2") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`♻️ *Doação de lacres*
+`╔══════════════════╗
+      DOAÇÃO LACRES
+╚══════════════════╝
 
 Aceitamos lacres de:
-🥤 Refrigerantes
-🍺 Latas em geral
 
-📦 Junte os lacres e entregue em nossos pontos de coleta.
+[✔] Refrigerantes
+[✔] Latas em geral
 
-0️⃣ Voltar ao menu`
+[#] Junte os lacres e entregue
+em nossos pontos de coleta.
+
+[0] Voltar ao menu`
             );
         }
 
+        // VOLUNTÁRIO
         else if (msg === "3") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`🤝 *Seja voluntário*
+`╔══════════════════╗
+     SEJA VOLUNTÁRIO
+╚══════════════════╝
 
 Você pode ajudar em:
-🐶 Resgates
-📦 Organização
-📲 Divulgação
-🚚 Transporte de doações
 
-Nossa equipe entrará em contato.
+[✔] Resgates
+[✔] Divulgação
+[✔] Organização
+[✔] Transporte
 
-0️⃣ Voltar ao menu`
+[#] Nossa equipe entrará
+em contato.
+
+[0] Voltar ao menu`
             );
         }
 
+        // OPÇÃO INVÁLIDA
         else {
 
             twiml.message(
-`❌ Opção inválida.
+`[X] Opção inválida.
 
-0️⃣ Voltar ao menu`
+[0] Voltar ao menu`
             );
         }
     }
@@ -250,5 +319,5 @@ Nossa equipe entrará em contato.
 });
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Servidor rodando 🚀");
+    console.log("Servidor rodando");
 });
