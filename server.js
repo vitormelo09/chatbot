@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const twilio = require("twilio");
@@ -11,9 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const usuarios = {};
 
 function menuPrincipal() {
-    return `╔══════════════════╗
-        ECOPATAS
-╚══════════════════╝
+    return `[ ECOPATAS ]
 
 ONG que arrecada lacres e tampinhas
 para ajudar animais abandonados.
@@ -41,7 +38,6 @@ app.post("/webhook", (req, res) => {
         };
     }
 
-    // INICIAR CHAT
     if (
         msg === "oi" ||
         msg === "olá" ||
@@ -60,7 +56,6 @@ app.post("/webhook", (req, res) => {
         return res.end(twiml.toString());
     }
 
-    // VOLTAR MENU
     if (msg === "0") {
 
         usuarios[numero].etapa = "menu";
@@ -76,18 +71,14 @@ app.post("/webhook", (req, res) => {
 
     const etapa = usuarios[numero].etapa;
 
-    // MENU PRINCIPAL
     if (etapa === "menu") {
 
-        // SOBRE ONG
         if (msg === "1") {
 
             usuarios[numero].etapa = "sobre";
 
             twiml.message(
-`╔══════════════════╗
-      SOBRE A ONG
-╚══════════════════╝
+`[ SOBRE A ONG ]
 
 A Ecopatas arrecada tampinhas
 plásticas e lacres de alumínio
@@ -103,17 +94,13 @@ O valor arrecadado ajuda em:
 
 [0] Voltar ao menu`
             );
-        }
 
-        // COMO AJUDAR
-        else if (msg === "2") {
+        } else if (msg === "2") {
 
             usuarios[numero].etapa = "ajuda";
 
             twiml.message(
-`╔══════════════════╗
-      COMO AJUDAR
-╚══════════════════╝
+`[ COMO AJUDAR ]
 
 [1] Doar tampinhas
 [2] Doar lacres
@@ -123,17 +110,13 @@ Digite uma opção.
 
 [0] Voltar ao menu`
             );
-        }
 
-        // PONTOS DE COLETA
-        else if (msg === "3") {
+        } else if (msg === "3") {
 
             usuarios[numero].etapa = "coleta";
 
             twiml.message(
-`╔══════════════════╗
-   PONTOS DE COLETA
-╚══════════════════╝
+`[ PONTOS DE COLETA ]
 
 [#] Mercado Central
 [#] Pet Shop Amigo Fiel
@@ -144,17 +127,13 @@ Horário:
 
 [0] Voltar ao menu`
             );
-        }
 
-        // DOAÇÕES
-        else if (msg === "4") {
+        } else if (msg === "4") {
 
             usuarios[numero].etapa = "doacoes";
 
             twiml.message(
-`╔══════════════════╗
-        DOAÇÕES
-╚══════════════════╝
+`[ DOAÇÕES ]
 
 PIX:
 ecopatas@gmail.com
@@ -166,17 +145,13 @@ NuBank
 
 [0] Voltar ao menu`
             );
-        }
 
-        // CONTATO
-        else if (msg === "5") {
+        } else if (msg === "5") {
 
             usuarios[numero].etapa = "contato";
 
             twiml.message(
-`╔══════════════════╗
-        CONTATO
-╚══════════════════╝
+`[ CONTATO ]
 
 Instagram:
 @ecopatas
@@ -192,27 +167,21 @@ www.ecopatas.org
 
 [0] Voltar ao menu`
             );
-        }
 
-        // ATENDENTE
-        else if (msg === "6") {
+        } else if (msg === "6") {
 
             usuarios[numero].etapa = "atendente";
 
             twiml.message(
-`╔══════════════════╗
-       ATENDENTE
-╚══════════════════╝
+`[ ATENDENTE ]
 
 [#] Um voluntário responderá
 você em breve.
 
 [0] Voltar ao menu`
             );
-        }
 
-        // OPÇÃO INVÁLIDA
-        else {
+        } else {
 
             twiml.message(
 `[X] Opção inválida.
@@ -222,20 +191,15 @@ Digite uma opção válida.
 [0] Voltar ao menu`
             );
         }
-    }
 
-    // COMO AJUDAR
-    else if (etapa === "ajuda") {
+    } else if (etapa === "ajuda") {
 
-        // TAMPINHAS
         if (msg === "1") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`╔══════════════════╗
-    DOAÇÃO TAMPINHAS
-╚══════════════════╝
+`[ DOAÇÃO TAMPINHAS ]
 
 Aceitamos:
 
@@ -251,17 +215,13 @@ Obrigado por ajudar.
 
 [0] Voltar ao menu`
             );
-        }
 
-        // LACRES
-        else if (msg === "2") {
+        } else if (msg === "2") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`╔══════════════════╗
-      DOAÇÃO LACRES
-╚══════════════════╝
+`[ DOAÇÃO LACRES ]
 
 Aceitamos lacres de:
 
@@ -273,17 +233,13 @@ em nossos pontos de coleta.
 
 [0] Voltar ao menu`
             );
-        }
 
-        // VOLUNTÁRIO
-        else if (msg === "3") {
+        } else if (msg === "3") {
 
             usuarios[numero].etapa = "menu";
 
             twiml.message(
-`╔══════════════════╗
-     SEJA VOLUNTÁRIO
-╚══════════════════╝
+`[ SEJA VOLUNTÁRIO ]
 
 Você pode ajudar em:
 
@@ -297,10 +253,8 @@ em contato.
 
 [0] Voltar ao menu`
             );
-        }
 
-        // OPÇÃO INVÁLIDA
-        else {
+        } else {
 
             twiml.message(
 `[X] Opção inválida.
@@ -310,7 +264,6 @@ em contato.
         }
     }
 
-    // RESPOSTA FINAL
     res.writeHead(200, {
         "Content-Type": "text/xml"
     });
